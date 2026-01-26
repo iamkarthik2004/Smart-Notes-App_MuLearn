@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Notes App</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .note-input {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .note-input textarea {
+      resize: none;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .note-input button {
+      padding: 10px;
+      font-size: 16px;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .note-input button:hover {
+      background: #4338ca;
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .note-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .note-card p {
+      white-space: pre-wrap;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .note-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .note-actions button {
+      padding: 6px 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .edit {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .delete {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .note-input textarea {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>📝 Smart Notes App</h1>
+
+    <div class="note-input">
+      <textarea id="noteText" placeholder="Write your note..."></textarea>
+      <button onclick="addNote()">Add Note</button>
+    </div>
+
+    <div class="notes" id="notesContainer"></div>
+  </div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    function saveNotes() {
+      localStorage.setItem("notes", JSON.stringify(notes));
+    }
+
+    function displayNotes() {
+      const container = document.getElementById("notesContainer");
+      container.innerHTML = "";
+
+      notes.forEach((note, index) => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+
+        card.innerHTML = `
+          <p>${note}</p>
+          <div class="note-actions">
+            <button class="edit" onclick="editNote(${index})">Edit</button>
+            <button class="delete" onclick="deleteNote(${index})">Delete</button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function addNote() {
+      const textArea = document.getElementById("noteText");
+      const noteText = textArea.value.trim();
+
+      if (noteText === "") {
+        alert("Note cannot be empty!");
+        return;
+      }
+
+      notes.push(noteText);
+      saveNotes();
+      displayNotes();
+      textArea.value = "";
+    }
+
+    function deleteNote(index) {
+      notes.splice(index, 1);
+      saveNotes();
+      displayNotes();
+    }
+
+    function editNote(index) {
+      const newText = prompt("Edit your note:", notes[index]);
+      if (newText !== null && newText.trim() !== "") {
+        notes[index] = newText.trim();
+        saveNotes();
+        displayNotes();
+      }
+    }
+
+    // Load notes on page load
+    displayNotes();
+  </script>
+</body>
+</html>
