@@ -1,186 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart Notes App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Notes App</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --bg-color: #f4f6f8;
+  --card-color: #ffffff;
+  --text-color: #333;
+  --btn-color: #4f46e5;
+}
 
-    body {
-      background: #f4f6f8;
-      padding: 20px;
-    }
+body.dark {
+  --bg-color: #121212;
+  --card-color: #1e1e1e;
+  --text-color: #f5f5f5;
+  --btn-color: #6366f1;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
+/* ---------- GLOBAL ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 20px;
+  transition: background 0.4s ease, color 0.4s ease;
+}
 
-    .note-input {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+.container {
+  max-width: 900px;
+  margin: auto;
+}
 
-    .note-input textarea {
-      resize: none;
-      height: 100px;
-      padding: 10px;
-      font-size: 16px;
-    }
+/* ---------- HEADER ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-    .note-input button {
-      padding: 10px;
-      font-size: 16px;
-      background: #4f46e5;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+.toggle-btn {
+  padding: 8px 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  background: var(--btn-color);
+  color: white;
+}
 
-    .note-input button:hover {
-      background: #4338ca;
-    }
+/* ---------- NOTE INPUT ---------- */
+.note-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
 
-    .notes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
+textarea {
+  resize: none;
+  height: 100px;
+  padding: 10px;
+  font-size: 16px;
+}
 
-    .note-card {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+.note-input button {
+  padding: 10px;
+  font-size: 16px;
+  background: var(--btn-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
 
-    .note-card p {
-      white-space: pre-wrap;
-      margin-bottom: 15px;
-      color: #333;
-    }
+/* ---------- NOTES GRID ---------- */
+.notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
 
-    .note-actions {
-      display: flex;
-      justify-content: space-between;
-    }
+.note-card {
+  background: var(--card-color);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: background 0.4s ease;
+}
 
-    .note-actions button {
-      padding: 6px 10px;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 14px;
-    }
+.note-card p {
+  white-space: pre-wrap;
+  margin-bottom: 15px;
+}
 
-    .edit {
-      background: #22c55e;
-      color: #fff;
-    }
+/* ---------- ACTION BUTTONS ---------- */
+.note-actions {
+  display: flex;
+  justify-content: space-between;
+}
 
-    .delete {
-      background: #ef4444;
-      color: #fff;
-    }
+.edit {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-    @media (max-width: 600px) {
-      .note-input textarea {
-        height: 80px;
-      }
-    }
-  </style>
+.delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 600px) {
+  textarea {
+    height: 80px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>📝 Smart Notes App</h1>
+<div class="container">
 
-    <div class="note-input">
-      <textarea id="noteText" placeholder="Write your note..."></textarea>
-      <button onclick="addNote()">Add Note</button>
-    </div>
-
-    <div class="notes" id="notesContainer"></div>
+  <div class="header">
+    <h1>📝 Smart Notes</h1>
+    <button class="toggle-btn" onclick="toggleTheme()">🌙 Toggle</button>
   </div>
 
-  <script>
-    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+  <div class="note-input">
+    <textarea id="noteText" placeholder="Write your note..."></textarea>
+    <button onclick="addNote()">Add Note</button>
+  </div>
 
-    function saveNotes() {
-      localStorage.setItem("notes", JSON.stringify(notes));
-    }
+  <div class="notes" id="notesContainer"></div>
+</div>
 
-    function displayNotes() {
-      const container = document.getElementById("notesContainer");
-      container.innerHTML = "";
+<script>
+/* ---------- NOTES LOGIC ---------- */
+let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-      notes.forEach((note, index) => {
-        const card = document.createElement("div");
-        card.className = "note-card";
+function saveNotes() {
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
 
-        card.innerHTML = `
-          <p>${note}</p>
-          <div class="note-actions">
-            <button class="edit" onclick="editNote(${index})">Edit</button>
-            <button class="delete" onclick="deleteNote(${index})">Delete</button>
-          </div>
-        `;
+function displayNotes() {
+  const container = document.getElementById("notesContainer");
+  container.innerHTML = "";
 
-        container.appendChild(card);
-      });
-    }
+  notes.forEach((note, index) => {
+    container.innerHTML += `
+      <div class="note-card">
+        <p>${note}</p>
+        <div class="note-actions">
+          <button class="edit" onclick="editNote(${index})">Edit</button>
+          <button class="delete" onclick="deleteNote(${index})">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+}
 
-    function addNote() {
-      const textArea = document.getElementById("noteText");
-      const noteText = textArea.value.trim();
+function addNote() {
+  const text = noteText.value.trim();
+  if (!text) return alert("Note cannot be empty!");
+  notes.push(text);
+  saveNotes();
+  displayNotes();
+  noteText.value = "";
+}
 
-      if (noteText === "") {
-        alert("Note cannot be empty!");
-        return;
-      }
+function deleteNote(index) {
+  notes.splice(index, 1);
+  saveNotes();
+  displayNotes();
+}
 
-      notes.push(noteText);
-      saveNotes();
-      displayNotes();
-      textArea.value = "";
-    }
-
-    function deleteNote(index) {
-      notes.splice(index, 1);
-      saveNotes();
-      displayNotes();
-    }
-
-    function editNote(index) {
-      const newText = prompt("Edit your note:", notes[index]);
-      if (newText !== null && newText.trim() !== "") {
-        notes[index] = newText.trim();
-        saveNotes();
-        displayNotes();
-      }
-    }
-
-    // Load notes on page load
+function editNote(index) {
+  const newText = prompt("Edit note:", notes[index]);
+  if (newText && newText.trim()) {
+    notes[index] = newText.trim();
+    saveNotes();
     displayNotes();
-  </script>
+  }
+}
+
+/* ---------- THEME LOGIC ---------- */
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+displayNotes();
+</script>
 </body>
 </html>
