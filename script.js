@@ -20,14 +20,13 @@ function saveNotes() {
 }
 
 /* ---------- DISPLAY ---------- */
-function displayNotes() {
+function displayNotes(filteredNotes = null) {
   const container = document.getElementById("notesContainer");
   container.innerHTML = "";
 
-  // Pinned notes first
-  const sortedNotes = [...notes].sort((a, b) => b.pinned - a.pinned);
+  const list = filteredNotes || [...notes].sort((a, b) => b.pinned - a.pinned);
 
-  sortedNotes.forEach((note) => {
+  list.forEach(note => {
     const index = notes.indexOf(note);
 
     container.innerHTML += `
@@ -53,10 +52,7 @@ function addNote() {
   const title = titleInput.value.trim();
   const content = contentInput.value.trim();
 
-  if (!content) {
-    alert("Note content cannot be empty!");
-    return;
-  }
+  if (!content) return alert("Note content cannot be empty!");
 
   notes.push({
     title,
@@ -72,48 +68,56 @@ function addNote() {
   contentInput.value = "";
 }
 
+/* ---------- SEARCH ---------- */
+function searchNotes() {
+  const query = searchInput.value.toLowerCase();
+
+  const filtered = notes.filter(note =>
+    note.title.toLowerCase().includes(query) ||
+    note.content.toLowerCase().includes(query)
+  );
+
+  displayNotes(filtered);
+}
+
 /* ---------- PIN ---------- */
 function togglePin(index) {
   notes[index].pinned = !notes[index].pinned;
   saveNotes();
-  displayNotes();
+  searchNotes();
 }
 
 /* ---------- DELETE ---------- */
 function deleteNote(index) {
   notes.splice(index, 1);
   saveNotes();
-  displayNotes();
+  searchNotes();
 }
 
-/* ---------- EDIT MODAL ---------- */
+/* ---------- EDIT ---------- */
 function openEdit(index) {
   currentEditIndex = index;
   editTitle.value = notes[index].title;
   editContent.value = notes[index].content;
-  document.getElementById("editModal").style.display = "flex";
+  editModal.style.display = "flex";
 }
 
 function closeModal() {
-  document.getElementById("editModal").style.display = "none";
-  currentEditIndex = null;
+  editModal.style.display = "none";
 }
 
 function saveEdit() {
   const title = editTitle.value.trim();
   const content = editContent.value.trim();
 
-  if (!content) {
-    alert("Note content cannot be empty!");
-    return;
-  }
+  if (!content) return alert("Note content cannot be empty!");
 
   notes[currentEditIndex].title = title;
   notes[currentEditIndex].content = content;
 
   saveNotes();
-  displayNotes();
   closeModal();
+  searchNotes();
 }
 
 /* ---------- DOWNLOAD ---------- */
