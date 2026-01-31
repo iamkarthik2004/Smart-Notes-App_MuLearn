@@ -1,3 +1,19 @@
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #1f2937;
+  --primary: #4f46e5;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #f5f5f5;
+  --primary: #6366f1;
+}
+
+/* ---------- GLOBAL ---------- */
 * {
   margin: 0;
   padding: 0;
@@ -6,8 +22,10 @@
 }
 
 body {
-  background: #f4f6f8;
+  background: var(--bg);
+  color: var(--text);
   padding: 20px;
+  transition: background 0.4s, color 0.4s;
 }
 
 .container {
@@ -15,18 +33,30 @@ body {
   margin: auto;
 }
 
-h1 {
-  text-align: center;
+/* ---------- HEADER ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.toggle-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* ---------- INPUT ---------- */
 .note-input {
-  background: #ffffff;
+  background: var(--card);
   padding: 16px;
   border-radius: 10px;
   margin-bottom: 25px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 .note-input input,
@@ -46,8 +76,8 @@ h1 {
 .note-input button {
   width: 100%;
   padding: 10px;
-  background: #4f46e5;
-  color: #ffffff;
+  background: var(--primary);
+  color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -62,7 +92,7 @@ h1 {
 
 /* ---------- NOTE CARD ---------- */
 .note-card {
-  background: #ffffff;
+  background: var(--card);
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -75,13 +105,11 @@ h1 {
 
 .note-card h3 {
   margin-bottom: 8px;
-  color: #333;
 }
 
 .note-card p {
   white-space: pre-wrap;
   margin-bottom: 12px;
-  color: #444;
 }
 
 /* ---------- ACTION BUTTONS ---------- */
@@ -95,8 +123,8 @@ h1 {
   padding: 6px;
   border: none;
   border-radius: 6px;
+  color: #fff;
   cursor: pointer;
-  color: #ffffff;
   font-size: 14px;
 }
 
@@ -119,16 +147,11 @@ h1 {
 }
 
 .modal-card {
-  background: #ffffff;
+  background: var(--card);
   padding: 20px;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.modal-card h2 {
-  margin-bottom: 12px;
 }
 
 .modal-card input,
@@ -145,7 +168,6 @@ h1 {
   resize: none;
 }
 
-/* ---------- MODAL BUTTONS ---------- */
 .modal-actions {
   display: flex;
   gap: 10px;
@@ -156,8 +178,8 @@ h1 {
   padding: 8px;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
   color: #fff;
+  cursor: pointer;
 }
 
 .save { background: #22c55e; }
