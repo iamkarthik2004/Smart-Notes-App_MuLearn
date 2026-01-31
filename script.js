@@ -2,20 +2,28 @@ let notes = JSON.parse(localStorage.getItem("notes")) || [];
 let currentEditIndex = null;
 let sortOrder = localStorage.getItem("sortOrder") || "newest";
 
-document.getElementById("sortSelect").value = sortOrder;
+sortSelect.value = sortOrder;
 
-/* ---------- THEME ---------- */
+/* ---------- THEME TOGGLE ---------- */
+const themeIcon = document.getElementById("themeIcon");
+
+function setTheme(theme) {
+  document.body.classList.toggle("dark", theme === "dark");
+  themeIcon.textContent = theme === "dark" ? "🌙" : "☀️";
+  localStorage.setItem("theme", theme);
+}
+
 function toggleTheme() {
-  document.body.classList.toggle("dark");
-  localStorage.setItem(
-    "theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
+  themeIcon.classList.add("rotate");
+
+  const isDark = document.body.classList.contains("dark");
+  setTheme(isDark ? "light" : "dark");
+
+  setTimeout(() => themeIcon.classList.remove("rotate"), 400);
 }
 
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-}
+// Load saved theme
+setTheme(localStorage.getItem("theme") || "light");
 
 /* ---------- STORAGE ---------- */
 function saveNotes() {
@@ -27,6 +35,27 @@ function changeSort() {
   sortOrder = sortSelect.value;
   localStorage.setItem("sortOrder", sortOrder);
   applyFilters();
+}
+
+/* ---------- FILTER + SORT ---------- */
+function applyFilters() {
+  const query = searchInput.value.toLowerCase();
+
+  let filtered = notes.filter(n =>
+    n.title.toLowerCase().includes(query) ||
+    n.content.toLowerCase().includes(query)
+  );
+
+  const pinned = filtered.filter(n => n.pinned);
+  let unpinned = filtered.filter(n => !n.pinned);
+
+  unpinned.sort((a, b) =>
+    sortOrder === "newest"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date)
+  );
+
+  displayNotes([...pinned, ...unpinned]);
 }
 
 /* ---------- DISPLAY ---------- */
@@ -52,28 +81,6 @@ function displayNotes(list) {
       </div>
     `;
   });
-}
-
-/* ---------- FILTER + SORT ---------- */
-function applyFilters() {
-  const query = searchInput.value.toLowerCase();
-
-  let filtered = notes.filter(n =>
-    n.title.toLowerCase().includes(query) ||
-    n.content.toLowerCase().includes(query)
-  );
-
-  // separate pinned & unpinned
-  const pinned = filtered.filter(n => n.pinned);
-  let unpinned = filtered.filter(n => !n.pinned);
-
-  unpinned.sort((a, b) =>
-    sortOrder === "newest"
-      ? new Date(b.date) - new Date(a.date)
-      : new Date(a.date) - new Date(b.date)
-  );
-
-  displayNotes([...pinned, ...unpinned]);
 }
 
 /* ---------- ADD ---------- */
@@ -133,14 +140,14 @@ function saveEdit() {
 /* ---------- DOWNLOAD ---------- */
 function downloadNote(index) {
   const note = notes[index];
-  const name =
+  const fileName =
     (note.title ? note.title.replace(/\s+/g, "_") : "note") + ".txt";
 
   const blob = new Blob([note.content], { type: "text/plain" });
   const link = document.createElement("a");
 
   link.href = URL.createObjectURL(blob);
-  link.download = name;
+  link.download = fileName;
   link.click();
   URL.revokeObjectURL(link.href);
 }
