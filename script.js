@@ -1,5 +1,8 @@
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 let currentEditIndex = null;
+let sortOrder = localStorage.getItem("sortOrder") || "newest";
+
+document.getElementById("sortSelect").value = sortOrder;
 
 /* ---------- THEME ---------- */
 function toggleTheme() {
@@ -19,17 +22,21 @@ function saveNotes() {
   localStorage.setItem("notes", JSON.stringify(notes));
 }
 
-/* ---------- DISPLAY ---------- */
-function displayNotes(filteredNotes = null) {
-  const container = document.getElementById("notesContainer");
-  container.innerHTML = "";
+/* ---------- SORT ---------- */
+function changeSort() {
+  sortOrder = sortSelect.value;
+  localStorage.setItem("sortOrder", sortOrder);
+  applyFilters();
+}
 
-  const list = filteredNotes || [...notes].sort((a, b) => b.pinned - a.pinned);
+/* ---------- DISPLAY ---------- */
+function displayNotes(list) {
+  notesContainer.innerHTML = "";
 
   list.forEach(note => {
     const index = notes.indexOf(note);
 
-    container.innerHTML += `
+    notesContainer.innerHTML += `
       <div class="note-card ${note.pinned ? "pinned" : ""}">
         ${note.pinned ? '<span class="pin-icon">📌</span>' : ""}
         <h3>${note.title || "Untitled Note"}</h3>
@@ -47,51 +54,57 @@ function displayNotes(filteredNotes = null) {
   });
 }
 
+/* ---------- FILTER + SORT ---------- */
+function applyFilters() {
+  const query = searchInput.value.toLowerCase();
+
+  let filtered = notes.filter(n =>
+    n.title.toLowerCase().includes(query) ||
+    n.content.toLowerCase().includes(query)
+  );
+
+  // separate pinned & unpinned
+  const pinned = filtered.filter(n => n.pinned);
+  let unpinned = filtered.filter(n => !n.pinned);
+
+  unpinned.sort((a, b) =>
+    sortOrder === "newest"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date)
+  );
+
+  displayNotes([...pinned, ...unpinned]);
+}
+
 /* ---------- ADD ---------- */
 function addNote() {
-  const title = titleInput.value.trim();
-  const content = contentInput.value.trim();
-
-  if (!content) return alert("Note content cannot be empty!");
+  if (!contentInput.value.trim()) return alert("Note content cannot be empty!");
 
   notes.push({
-    title,
-    content,
+    title: titleInput.value.trim(),
+    content: contentInput.value.trim(),
     pinned: false,
-    date: new Date().toISOString().slice(0, 10)
+    date: new Date().toISOString()
   });
 
   saveNotes();
-  displayNotes();
-
   titleInput.value = "";
   contentInput.value = "";
-}
-
-/* ---------- SEARCH ---------- */
-function searchNotes() {
-  const query = searchInput.value.toLowerCase();
-
-  const filtered = notes.filter(note =>
-    note.title.toLowerCase().includes(query) ||
-    note.content.toLowerCase().includes(query)
-  );
-
-  displayNotes(filtered);
+  applyFilters();
 }
 
 /* ---------- PIN ---------- */
 function togglePin(index) {
   notes[index].pinned = !notes[index].pinned;
   saveNotes();
-  searchNotes();
+  applyFilters();
 }
 
 /* ---------- DELETE ---------- */
 function deleteNote(index) {
   notes.splice(index, 1);
   saveNotes();
-  searchNotes();
+  applyFilters();
 }
 
 /* ---------- EDIT ---------- */
@@ -107,34 +120,30 @@ function closeModal() {
 }
 
 function saveEdit() {
-  const title = editTitle.value.trim();
-  const content = editContent.value.trim();
+  if (!editContent.value.trim()) return alert("Note content cannot be empty!");
 
-  if (!content) return alert("Note content cannot be empty!");
-
-  notes[currentEditIndex].title = title;
-  notes[currentEditIndex].content = content;
+  notes[currentEditIndex].title = editTitle.value.trim();
+  notes[currentEditIndex].content = editContent.value.trim();
 
   saveNotes();
   closeModal();
-  searchNotes();
+  applyFilters();
 }
 
 /* ---------- DOWNLOAD ---------- */
 function downloadNote(index) {
   const note = notes[index];
-  const fileName =
-    (note.title ? note.title.replace(/\s+/g, "_") : "note_" + note.date) + ".txt";
+  const name =
+    (note.title ? note.title.replace(/\s+/g, "_") : "note") + ".txt";
 
   const blob = new Blob([note.content], { type: "text/plain" });
   const link = document.createElement("a");
 
   link.href = URL.createObjectURL(blob);
-  link.download = fileName;
+  link.download = name;
   link.click();
-
   URL.revokeObjectURL(link.href);
 }
 
 /* ---------- LOAD ---------- */
-displayNotes();
+applyFilters();
