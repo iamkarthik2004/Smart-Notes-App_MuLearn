@@ -10,7 +10,10 @@
 <body>
 
   <div class="container">
-    <h1>📝 Smart Notes App</h1>
+    <div class="header">
+      <h1>📝 Smart Notes</h1>
+      <button class="toggle-btn" onclick="toggleTheme()">🌙</button>
+    </div>
 
     <div class="note-input">
       <input type="text" id="titleInput" placeholder="Note title" />
@@ -21,89 +24,21 @@
     <div class="notes" id="notesContainer"></div>
   </div>
 
-  <script>
-    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+  <!-- ===== EDIT MODAL ===== -->
+  <div class="modal" id="editModal">
+    <div class="modal-card">
+      <h2>Edit Note</h2>
 
-    function saveNotes() {
-      localStorage.setItem("notes", JSON.stringify(notes));
-    }
+      <input type="text" id="editTitle" />
+      <textarea id="editContent"></textarea>
 
-    function displayNotes() {
-      const container = document.getElementById("notesContainer");
-      container.innerHTML = "";
+      <div class="modal-actions">
+        <button class="save" onclick="saveEdit()">Save</button>
+        <button class="cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-      notes.forEach((note, index) => {
-        container.innerHTML += `
-          <div class="note-card">
-            <h3>${note.title || "Untitled Note"}</h3>
-            <p>${note.content}</p>
-            <div class="note-actions">
-              <button class="edit" onclick="editNote(${index})">Edit</button>
-              <button class="delete" onclick="deleteNote(${index})">Delete</button>
-              <button class="download" onclick="downloadNote(${index})">Download</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function addNote() {
-      const title = titleInput.value.trim();
-      const content = contentInput.value.trim();
-
-      if (!content) {
-        alert("Note content cannot be empty!");
-        return;
-      }
-
-      notes.push({
-        title: title,
-        content: content,
-        date: new Date().toISOString().slice(0, 10)
-      });
-
-      saveNotes();
-      displayNotes();
-
-      titleInput.value = "";
-      contentInput.value = "";
-    }
-
-    function deleteNote(index) {
-      notes.splice(index, 1);
-      saveNotes();
-      displayNotes();
-    }
-
-    function editNote(index) {
-      const newTitle = prompt("Edit title:", notes[index].title);
-      const newContent = prompt("Edit content:", notes[index].content);
-
-      if (newContent && newContent.trim()) {
-        notes[index].title = newTitle;
-        notes[index].content = newContent;
-        saveNotes();
-        displayNotes();
-      }
-    }
-
-    function downloadNote(index) {
-      const note = notes[index];
-      const fileName =
-        (note.title ? note.title.replace(/\s+/g, "_") : "note_" + note.date) + ".txt";
-
-      const blob = new Blob([note.content], { type: "text/plain" });
-      const link = document.createElement("a");
-
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
-
-      URL.revokeObjectURL(link.href);
-    }
-
-    displayNotes();
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
