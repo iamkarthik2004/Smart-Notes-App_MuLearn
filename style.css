@@ -22,7 +22,7 @@ h1 {
 
 /* ---------- INPUT ---------- */
 .note-input {
-  background: #fff;
+  background: #ffffff;
   padding: 16px;
   border-radius: 10px;
   margin-bottom: 25px;
@@ -47,7 +47,7 @@ h1 {
   width: 100%;
   padding: 10px;
   background: #4f46e5;
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -62,7 +62,7 @@ h1 {
 
 /* ---------- NOTE CARD ---------- */
 .note-card {
-  background: #fff;
+  background: #ffffff;
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -81,13 +81,13 @@ h1 {
 .note-card p {
   white-space: pre-wrap;
   margin-bottom: 12px;
+  color: #444;
 }
 
 /* ---------- ACTION BUTTONS ---------- */
 .note-actions {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 6px;
 }
 
@@ -97,7 +97,7 @@ h1 {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: #fff;
+  color: #ffffff;
   font-size: 14px;
 }
 
