@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Notes App</title>
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,16 +13,18 @@
     <!-- HEADER -->
     <div class="header">
       <h1>📝 Smart Notes</h1>
-      <button class="toggle-btn" onclick="toggleTheme()">🌙</button>
+      <button class="toggle-btn" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+      </button>
     </div>
 
     <!-- SEARCH -->
     <input
       type="text"
       id="searchInput"
+      class="search-bar"
       placeholder="🔍 Search notes..."
       oninput="applyFilters()"
-      class="search-bar"
     />
 
     <!-- SORT -->
