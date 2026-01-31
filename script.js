@@ -1,6 +1,20 @@
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
+let currentEditIndex = null;
 
-/* ---------- SAVE ---------- */
+/* ---------- THEME ---------- */
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+/* ---------- STORAGE ---------- */
 function saveNotes() {
   localStorage.setItem("notes", JSON.stringify(notes));
 }
@@ -16,7 +30,7 @@ function displayNotes() {
         <h3>${note.title || "Untitled Note"}</h3>
         <p>${note.content}</p>
         <div class="note-actions">
-          <button class="edit" onclick="editNote(${index})">Edit</button>
+          <button class="edit" onclick="openEdit(${index})">Edit</button>
           <button class="delete" onclick="deleteNote(${index})">Delete</button>
           <button class="download" onclick="downloadNote(${index})">Download</button>
         </div>
@@ -36,8 +50,8 @@ function addNote() {
   }
 
   notes.push({
-    title: title,
-    content: content,
+    title,
+    content,
     date: new Date().toISOString().slice(0, 10)
   });
 
@@ -55,27 +69,41 @@ function deleteNote(index) {
   displayNotes();
 }
 
-/* ---------- EDIT ---------- */
-function editNote(index) {
-  const newTitle = prompt("Edit title:", notes[index].title);
-  const newContent = prompt("Edit content:", notes[index].content);
+/* ---------- EDIT MODAL ---------- */
+function openEdit(index) {
+  currentEditIndex = index;
+  editTitle.value = notes[index].title;
+  editContent.value = notes[index].content;
+  document.getElementById("editModal").style.display = "flex";
+}
 
-  if (newContent && newContent.trim()) {
-    notes[index].title = newTitle;
-    notes[index].content = newContent;
-    saveNotes();
-    displayNotes();
+function closeModal() {
+  document.getElementById("editModal").style.display = "none";
+  currentEditIndex = null;
+}
+
+function saveEdit() {
+  const title = editTitle.value.trim();
+  const content = editContent.value.trim();
+
+  if (!content) {
+    alert("Note content cannot be empty!");
+    return;
   }
+
+  notes[currentEditIndex].title = title;
+  notes[currentEditIndex].content = content;
+
+  saveNotes();
+  displayNotes();
+  closeModal();
 }
 
 /* ---------- DOWNLOAD ---------- */
 function downloadNote(index) {
   const note = notes[index];
-
   const fileName =
-    (note.title
-      ? note.title.replace(/\s+/g, "_")
-      : "note_" + note.date) + ".txt";
+    (note.title ? note.title.replace(/\s+/g, "_") : "note_" + note.date) + ".txt";
 
   const blob = new Blob([note.content], { type: "text/plain" });
   const link = document.createElement("a");
