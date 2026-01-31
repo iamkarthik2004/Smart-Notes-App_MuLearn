@@ -10,25 +10,36 @@
 <body>
 
   <div class="container">
+    <!-- HEADER -->
     <div class="header">
       <h1>📝 Smart Notes</h1>
       <button class="toggle-btn" onclick="toggleTheme()">🌙</button>
     </div>
 
+    <!-- SEARCH -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="🔍 Search notes..."
+      oninput="searchNotes()"
+      class="search-bar"
+    />
+
+    <!-- ADD NOTE -->
     <div class="note-input">
       <input type="text" id="titleInput" placeholder="Note title" />
       <textarea id="contentInput" placeholder="Write your note..."></textarea>
       <button onclick="addNote()">Add Note</button>
     </div>
 
+    <!-- NOTES -->
     <div class="notes" id="notesContainer"></div>
   </div>
 
-  <!-- ===== EDIT MODAL ===== -->
+  <!-- EDIT MODAL -->
   <div class="modal" id="editModal">
     <div class="modal-card">
       <h2>Edit Note</h2>
-
       <input type="text" id="editTitle" />
       <textarea id="editContent"></textarea>
 
