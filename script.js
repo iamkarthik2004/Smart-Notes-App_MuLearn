@@ -24,12 +24,21 @@ function displayNotes() {
   const container = document.getElementById("notesContainer");
   container.innerHTML = "";
 
-  notes.forEach((note, index) => {
+  // Pinned notes first
+  const sortedNotes = [...notes].sort((a, b) => b.pinned - a.pinned);
+
+  sortedNotes.forEach((note) => {
+    const index = notes.indexOf(note);
+
     container.innerHTML += `
-      <div class="note-card">
+      <div class="note-card ${note.pinned ? "pinned" : ""}">
+        ${note.pinned ? '<span class="pin-icon">📌</span>' : ""}
         <h3>${note.title || "Untitled Note"}</h3>
         <p>${note.content}</p>
         <div class="note-actions">
+          <button class="pin" onclick="togglePin(${index})">
+            ${note.pinned ? "Unpin" : "Pin"}
+          </button>
           <button class="edit" onclick="openEdit(${index})">Edit</button>
           <button class="delete" onclick="deleteNote(${index})">Delete</button>
           <button class="download" onclick="downloadNote(${index})">Download</button>
@@ -52,6 +61,7 @@ function addNote() {
   notes.push({
     title,
     content,
+    pinned: false,
     date: new Date().toISOString().slice(0, 10)
   });
 
@@ -60,6 +70,13 @@ function addNote() {
 
   titleInput.value = "";
   contentInput.value = "";
+}
+
+/* ---------- PIN ---------- */
+function togglePin(index) {
+  notes[index].pinned = !notes[index].pinned;
+  saveNotes();
+  displayNotes();
 }
 
 /* ---------- DELETE ---------- */
