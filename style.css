@@ -50,11 +50,12 @@ body {
   cursor: pointer;
 }
 
-/* ---------- SEARCH ---------- */
-.search-bar {
+/* ---------- SEARCH & SORT ---------- */
+.search-bar,
+.sort-select {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
