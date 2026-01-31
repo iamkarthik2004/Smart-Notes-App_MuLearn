@@ -10,6 +10,7 @@
 <body>
 
   <div class="container">
+
     <!-- HEADER -->
     <div class="header">
       <h1>📝 Smart Notes</h1>
@@ -21,9 +22,15 @@
       type="text"
       id="searchInput"
       placeholder="🔍 Search notes..."
-      oninput="searchNotes()"
+      oninput="applyFilters()"
       class="search-bar"
     />
+
+    <!-- SORT -->
+    <select id="sortSelect" class="sort-select" onchange="changeSort()">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+    </select>
 
     <!-- ADD NOTE -->
     <div class="note-input">
